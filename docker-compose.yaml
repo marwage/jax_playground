@@ -1,0 +1,38 @@
+---
+version: '2'
+networks:
+  jax:
+    driver: bridge
+services:
+  worker-0:
+    image: kungfu.azurecr.io/mw-jax:latest
+    volumes: [/home/marcel/Elasticity/Repo/jax_playground/data:/data]
+    command: >
+      python
+      /workspace/p_jit_add.py
+      --id 0
+      --num-proc 2
+    networks: [jax]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0', '1']
+              capabilities: [gpu]
+  worker-1:
+    image: kungfu.azurecr.io/mw-jax:latest
+    volumes: [/home/marcel/Elasticity/Repo/jax_playground/data:/data]
+    command: >
+      python
+      /workspace/p_jit_add.py
+      --id 1
+      --num-proc 2
+    networks: [jax]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['2', '3']
+              capabilities: [gpu]
